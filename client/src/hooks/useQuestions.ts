@@ -17,6 +17,14 @@ export function useQuestionProgress(profileId: string, categorySlug: string) {
   });
 }
 
+export function useCategoriesProgress(profileId: string) {
+  return useQuery({
+    queryKey: ['categoriesProgress', profileId],
+    queryFn: () => questionService.getAllProgress(profileId),
+    enabled: !!profileId,
+  });
+}
+
 export function useProfileAnswers(profileId: string, categorySlug?: string) {
   return useQuery({
     queryKey: ['answers', profileId, categorySlug],

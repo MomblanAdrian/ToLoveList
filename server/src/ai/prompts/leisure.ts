@@ -16,7 +16,7 @@ Consider:
 - Budget constraints
 - Weather considerations
 - Special interests (arts, music, nature, sports, learning)
-- Local events and seasonal activities
+- Local events and seasonal activities — follow the SEARCH RADIUS instruction below
 
 When multiple users are involved, find activities that everyone can enjoy together.
 
@@ -24,9 +24,23 @@ Return recommendations as a valid JSON array.`;
 
 export function buildLeisurePrompt(
   profiles: Array<{ name: string; answers: Array<{ questionText: string; value: number }> }>,
-  location?: { city?: string },
+  location?: { city?: string; lat?: number; lng?: number },
+  locationRadius?: number,
 ): string {
   const locationStr = location?.city ? `Location: ${location.city}` : 'Location: Not specified';
+
+  let radiusInstruction = '';
+  if (locationRadius !== undefined && location?.city) {
+    if (locationRadius <= 30) {
+      radiusInstruction = `SEARCH RADIUS: The user does NOT mind traveling far. Recommend activities anywhere in the country or world, not limited to ${location.city}.`;
+    } else if (locationRadius <= 60) {
+      radiusInstruction = `SEARCH RADIUS: Recommend activities within ${location.city} and its surrounding metropolitan area.`;
+    } else {
+      radiusInstruction = `SEARCH RADIUS: Recommend nearby activities close to ${location.city} — walking distance or short drive preferred.`;
+    }
+  } else if (location?.city) {
+    radiusInstruction = `SEARCH RADIUS: Recommend activities within ${location.city}.`;
+  }
 
   const profilesStr = profiles
     .map(
@@ -37,6 +51,7 @@ ${p.answers.map((a) => `  - "${a.questionText}": ${a.value}/100`).join('\n')}`,
     .join('\n\n');
 
   return `${locationStr}
+${radiusInstruction}
 
 User profiles and their leisure preferences:
 

@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import type { Recommendation } from '@tolovelist/shared';
 import { CATEGORY_EMOJIS } from '../../constants/categories';
+import { useUpdateRecommendationStatus } from '../../hooks/useRecommendations';
 
 interface RecommendationCardProps {
   recommendation: Recommendation;
   index: number;
+  onStatusUpdate?: (id: string) => void;
 }
 
 const META_LABELS: Record<string, string> = {
@@ -22,7 +25,10 @@ const META_LABELS: Record<string, string> = {
   difficulty: '🎯 Difficulty',
 };
 
-export function RecommendationCard({ recommendation, index }: RecommendationCardProps) {
+export function RecommendationCard({ recommendation, index, onStatusUpdate }: RecommendationCardProps) {
+  const updateStatus = useUpdateRecommendationStatus();
+  const [updating, setUpdating] = useState<'completed' | 'dismissed' | null>(null);
+
   const scoreColor =
     recommendation.compatibilityScore >= 80
       ? 'from-emerald-500 to-emerald-400'
@@ -38,6 +44,16 @@ export function RecommendationCard({ recommendation, index }: RecommendationCard
   const filteredEntries = Object.entries(metadata).filter(
     ([key, value]) => value && key !== 'address' && key !== 'website' && key !== 'url',
   );
+
+  const handleStatus = async (status: 'completed' | 'dismissed') => {
+    setUpdating(status);
+    try {
+      await updateStatus.mutateAsync({ id: recommendation.id, status });
+      onStatusUpdate?.(recommendation.id);
+    } catch {
+      setUpdating(null);
+    }
+  };
 
   return (
     <motion.div
@@ -113,7 +129,7 @@ export function RecommendationCard({ recommendation, index }: RecommendationCard
         )}
 
         {filteredEntries.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-1.5 mb-4">
             {filteredEntries.slice(0, 6).map(([key, value]) => {
               const strValue = String(value);
               const label = META_LABELS[key] || key.replace(/([A-Z])/g, ' $1').trim();
@@ -128,6 +144,39 @@ export function RecommendationCard({ recommendation, index }: RecommendationCard
             })}
           </div>
         )}
+
+        <div className="flex gap-2 pt-2 border-t border-surface-700/50">
+          <button
+            onClick={() => handleStatus('completed')}
+            disabled={updating !== null}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {updating === 'completed' ? (
+              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            ) : (
+              <span>✓</span>
+            )}
+            Completado
+          </button>
+          <button
+            onClick={() => handleStatus('dismissed')}
+            disabled={updating !== null}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all bg-surface-800 text-surface-400 hover:text-surface-200 hover:bg-surface-700 border border-surface-700/50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {updating === 'dismissed' ? (
+              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            ) : (
+              <span>✕</span>
+            )}
+            Descartar
+          </button>
+        </div>
       </div>
     </motion.div>
   );

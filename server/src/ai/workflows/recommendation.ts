@@ -16,6 +16,8 @@ interface GenerateInput {
   categoryDescription: string;
   location?: { lat?: number; lng?: number; city?: string };
   groupSize: number;
+  completedTitles?: string[];
+  dismissedTitles?: string[];
 }
 
 interface GeneratedRecommendation {
@@ -31,19 +33,42 @@ export async function runRecommendationWorkflow(input: GenerateInput): Promise<G
 
   const profilesWithAnswers = input.profiles.map((p) => {
     const categoryAnswers = p.answers[input.categorySlug] || [];
+
+    let locationImportance = 50;
+    const locationQuestion = categoryAnswers.find(
+      (a) =>
+        a.questionText.toLowerCase().includes('location') ||
+        a.questionText.toLowerCase().includes('proximity'),
+    );
+    if (locationQuestion) {
+      locationImportance = locationQuestion.value;
+    }
+
     return {
       name: p.name,
       answers: categoryAnswers.map((a) => ({
         questionText: a.questionText,
         value: a.value,
       })),
+      locationImportance,
     };
   });
+
+  const locationRadius =
+    profilesWithAnswers.length > 0
+      ? Math.round(
+          profilesWithAnswers.reduce((sum, p) => sum + p.locationImportance, 0) /
+            profilesWithAnswers.length,
+        )
+      : 50;
 
   const { systemPrompt, userPrompt } = getCategoryPrompts(
     input.categorySlug,
     profilesWithAnswers,
-    input.location ? { city: input.location.city } : undefined,
+    input.location ? { city: input.location.city, lat: input.location.lat, lng: input.location.lng } : undefined,
+    locationRadius,
+    input.completedTitles,
+    input.dismissedTitles,
   );
 
   const messages: ChatMessage[] = [

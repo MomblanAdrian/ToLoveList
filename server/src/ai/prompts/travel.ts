@@ -18,7 +18,7 @@ Consider:
 - Activities enjoyed (hiking, shopping, sightseeing, dining)
 - Travel experience level
 - Romantic vs family vs group travel
-- Proximity to user's location
+- Proximity to user's location — follow the RADIUS instruction below
 
 When multiple users are involved, find destinations that appeal to everyone's travel style.
 
@@ -26,9 +26,23 @@ Return recommendations as a valid JSON array.`;
 
 export function buildTravelPrompt(
   profiles: Array<{ name: string; answers: Array<{ questionText: string; value: number }> }>,
-  location?: { city?: string },
+  location?: { city?: string; lat?: number; lng?: number },
+  locationRadius?: number,
 ): string {
   const locationStr = location?.city ? `Current Location: ${location.city}` : 'Current Location: Not specified';
+
+  let radiusInstruction = '';
+  if (locationRadius !== undefined) {
+    if (locationRadius <= 30) {
+      radiusInstruction = `TRAVEL RADIUS: The user is open to long-distance travel. Recommend destinations anywhere in the world. Do NOT limit to nearby areas.`;
+    } else if (locationRadius <= 60) {
+      radiusInstruction = `TRAVEL RADIUS: The user has a moderate preference for nearby travel. Recommend destinations within the same country or region. Include both nearby getaways and mid-range destinations.`;
+    } else if (locationRadius <= 80) {
+      radiusInstruction = `TRAVEL RADIUS: The user prefers places close by. Recommend destinations within a few hours drive or a short flight from ${location?.city || 'their location'}.`;
+    } else {
+      radiusInstruction = `TRAVEL RADIUS: The user strongly prefers local/nearby travel. Recommend staycations, nearby towns, and destinations within a 2-hour drive from ${location?.city || 'their location'}.`;
+    }
+  }
 
   const profilesStr = profiles
     .map(
@@ -39,6 +53,7 @@ ${p.answers.map((a) => `  - "${a.questionText}": ${a.value}/100`).join('\n')}`,
     .join('\n\n');
 
   return `${locationStr}
+${radiusInstruction}
 
 User profiles and their travel preferences:
 

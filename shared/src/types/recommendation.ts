@@ -1,3 +1,5 @@
+export type RecommendationStatus = 'active' | 'completed' | 'dismissed';
+
 export interface Recommendation {
   id: string;
   title: string;
@@ -7,6 +9,7 @@ export interface Recommendation {
   categorySlug: string;
   metadata: Record<string, unknown>;
   source: string;
+  status: RecommendationStatus;
   createdAt: string;
 }
 

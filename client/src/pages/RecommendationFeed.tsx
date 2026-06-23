@@ -24,6 +24,8 @@ export function RecommendationFeed() {
 
   const [showGenerate, setShowGenerate] = useState(false);
   const [selectedProfileIds, setSelectedProfileIds] = useState<string[]>([profileId || '']);
+  const [removedRecIds, setRemovedRecIds] = useState<Set<string>>(new Set());
+  const [generateError, setGenerateError] = useState<string | null>(null);
 
   const category = CATEGORIES.find((c) => c.slug === categorySlug);
   const profile = profiles?.find((p) => p.id === profileId);
@@ -36,15 +38,27 @@ export function RecommendationFeed() {
 
   const handleGenerate = async () => {
     if (!categorySlug || selectedProfileIds.length === 0) return;
+    setGenerateError(null);
 
     try {
       await generateRecs.mutateAsync({
         categorySlug,
         profileIds: selectedProfileIds,
-        location: location.city ? { city: location.city } : undefined,
+        location: location.city
+          ? { city: location.city, lat: location.lat, lng: location.lng }
+          : undefined,
       });
-    } catch {}
+      setShowGenerate(false);
+    } catch (err) {
+      setGenerateError(err instanceof Error ? err.message : 'Failed to generate recommendations');
+    }
   };
+
+  const handleStatusUpdate = (id: string) => {
+    setRemovedRecIds((prev) => new Set(prev).add(id));
+  };
+
+  const visibleRecs = existingRecommendations?.filter((r) => !removedRecIds.has(r.id));
 
   if (recsLoading) {
     return (
@@ -147,12 +161,22 @@ export function RecommendationFeed() {
         )}
       </AnimatePresence>
 
+      {generateError && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400"
+        >
+          {generateError}
+        </motion.div>
+      )}
+
       {generateRecs.isPending ? (
         <RecommendationSkeleton />
-      ) : existingRecommendations && existingRecommendations.length > 0 ? (
+      ) : visibleRecs && visibleRecs.length > 0 ? (
         <div className="space-y-4">
-          {existingRecommendations.map((rec, i) => (
-            <RecommendationCard key={rec.id} recommendation={rec} index={i} />
+          {visibleRecs.map((rec, i) => (
+            <RecommendationCard key={rec.id} recommendation={rec} index={i} onStatusUpdate={handleStatusUpdate} />
           ))}
         </div>
       ) : (

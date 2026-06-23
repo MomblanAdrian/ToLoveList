@@ -17,23 +17,23 @@ export function Sidebar() {
   const user = useAuthStore((s) => s.user);
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setOpen(false)}
-        />
-      )}
+    <>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
-      <motion.aside
-        initial={{ x: -300 }}
-        animate={{ x: isOpen ? 0 : -300 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed top-0 left-0 bottom-0 w-72 z-50 bg-surface-900 border-r border-surface-800 lg:translate-x-0 lg:static lg:z-auto"
-        style={{ transform: isOpen ? 'translateX(0)' : undefined }}
+      <aside
+        className={`fixed top-0 left-0 bottom-0 w-72 z-50 bg-surface-900 border-r border-surface-800 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-auto ${
+          isOpen ? 'translate-x-0' : '-translate-x-72'
+        }`}
       >
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-surface-800">
@@ -77,7 +77,7 @@ export function Sidebar() {
             </div>
           </div>
         </div>
-      </motion.aside>
-    </AnimatePresence>
+      </aside>
+    </>
   );
 }

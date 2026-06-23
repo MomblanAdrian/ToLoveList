@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuestions, useProfileAnswers, useSubmitAnswer } from '../hooks/useQuestions';
 import { useGenerateRecommendations } from '../hooks/useRecommendations';
+import { useLocation } from '../hooks/useLocation';
 import { Button } from '../components/ui/Button';
 import { Slider } from '../components/ui/Slider';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
@@ -15,6 +16,8 @@ export function Questionnaire() {
   const { data: existingAnswers } = useProfileAnswers(profileId || '', categorySlug);
   const submitAnswer = useSubmitAnswer();
   const generateRecs = useGenerateRecommendations();
+
+  const location = useLocation();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
@@ -85,6 +88,9 @@ export function Questionnaire() {
         await generateRecs.mutateAsync({
           categorySlug,
           profileIds: [profileId],
+          location: location.city
+            ? { city: location.city, lat: location.lat, lng: location.lng }
+            : undefined,
         });
       } catch {}
     }

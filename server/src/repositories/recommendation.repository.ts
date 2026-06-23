@@ -3,7 +3,7 @@ import type { Prisma } from '@prisma/client';
 
 export const recommendationRepository = {
   async findByProfileId(profileId: string, categorySlug?: string) {
-    const where: Record<string, unknown> = { profileId };
+    const where: Record<string, unknown> = { profileId, status: 'active' };
     if (categorySlug) {
       where.category = { slug: categorySlug };
     }
@@ -16,7 +16,7 @@ export const recommendationRepository = {
   },
 
   async findByGroupId(groupId: string, categorySlug?: string) {
-    const where: Record<string, unknown> = { groupId };
+    const where: Record<string, unknown> = { groupId, status: 'active' };
     if (categorySlug) {
       where.category = { slug: categorySlug };
     }
@@ -25,6 +25,27 @@ export const recommendationRepository = {
       include: { category: true },
       orderBy: { createdAt: 'desc' },
       take: 50,
+    });
+  },
+
+  async findByProfileIdWithStatus(profileId: string, categorySlug: string, status: string) {
+    return prisma.recommendation.findMany({
+      where: { profileId, status, category: { slug: categorySlug } },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+  },
+
+  async updateStatus(id: string, status: string) {
+    return prisma.recommendation.update({
+      where: { id },
+      data: { status },
+    });
+  },
+
+  async deleteByProfileAndCategory(profileId: string, categoryId: string) {
+    return prisma.recommendation.deleteMany({
+      where: { profileId, categoryId },
     });
   },
 

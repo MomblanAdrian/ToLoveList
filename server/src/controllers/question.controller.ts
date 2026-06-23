@@ -21,6 +21,15 @@ export const questionController = {
     }
   },
 
+  async getAllCategoriesProgress(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const progress = await questionService.getCategoriesWithProgress(req.params.profileId!);
+      res.json({ success: true, data: progress });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async submitAnswer(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const answer = await questionService.submitAnswer(req.params.profileId!, req.body.questionId, req.body.value);

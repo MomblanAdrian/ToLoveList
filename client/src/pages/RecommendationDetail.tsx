@@ -24,21 +24,35 @@ export function RecommendationDetail() {
   const { data: groups } = useGroups();
   const location = useLocation();
 
+  const [removedRecIds, setRemovedRecIds] = useState<Set<string>>(new Set());
+  const [generateError, setGenerateError] = useState<string | null>(null);
+
   const category = CATEGORIES.find((c) => c.slug === categorySlug);
   const group = groups?.find((g) => g.id === groupId);
 
   const handleGenerate = async () => {
     if (!categorySlug || !groupId || !group) return;
+    setGenerateError(null);
 
     try {
       await generateRecs.mutateAsync({
         categorySlug,
         profileIds: group.profiles.map((gp) => gp.profileId),
         groupId,
-        location: location.city ? { city: location.city } : undefined,
+        location: location.city
+          ? { city: location.city, lat: location.lat, lng: location.lng }
+          : undefined,
       });
-    } catch {}
+    } catch (err) {
+      setGenerateError(err instanceof Error ? err.message : 'Failed to generate recommendations');
+    }
   };
+
+  const handleStatusUpdate = (id: string) => {
+    setRemovedRecIds((prev) => new Set(prev).add(id));
+  };
+
+  const visibleRecs = recommendations?.filter((r) => !removedRecIds.has(r.id));
 
   if (isLoading) {
     return (
@@ -105,12 +119,22 @@ export function RecommendationDetail() {
         </Card>
       </div>
 
+      {generateError && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400"
+        >
+          {generateError}
+        </motion.div>
+      )}
+
       {generateRecs.isPending ? (
         <RecommendationSkeleton />
-      ) : recommendations && recommendations.length > 0 ? (
+      ) : visibleRecs && visibleRecs.length > 0 ? (
         <div className="space-y-4">
-          {recommendations.map((rec, i) => (
-            <RecommendationCard key={rec.id} recommendation={rec} index={i} />
+          {visibleRecs.map((rec, i) => (
+            <RecommendationCard key={rec.id} recommendation={rec} index={i} onStatusUpdate={handleStatusUpdate} />
           ))}
         </div>
       ) : (

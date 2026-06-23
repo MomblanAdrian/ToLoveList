@@ -13,6 +13,8 @@ interface RecommendationInput {
   categoryDescription: string;
   location?: { lat?: number; lng?: number; city?: string };
   groupSize: number;
+  completedTitles?: string[];
+  dismissedTitles?: string[];
 }
 
 interface RecommendationOutput {

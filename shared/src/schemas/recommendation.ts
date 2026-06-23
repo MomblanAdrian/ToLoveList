@@ -12,3 +12,7 @@ export const generateRecommendationSchema = z.object({
     })
     .optional(),
 });
+
+export const updateRecommendationStatusSchema = z.object({
+  status: z.enum(['completed', 'dismissed']),
+});

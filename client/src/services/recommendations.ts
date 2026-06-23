@@ -3,6 +3,7 @@ import { API_ENDPOINTS } from '../constants/api';
 import type {
   Recommendation,
   GenerateRecommendationRequest,
+  RecommendationStatus,
 } from '@tolovelist/shared';
 
 export const recommendationService = {
@@ -25,5 +26,12 @@ export const recommendationService = {
       method: 'POST',
       body: JSON.stringify(data),
     });
+  },
+
+  async updateStatus(id: string, status: RecommendationStatus) {
+    return apiRequest<{ id: string; status: string }>(
+      `${API_ENDPOINTS.RECOMMENDATIONS}/${id}/status`,
+      { method: 'PATCH', body: JSON.stringify({ status }) },
+    );
   },
 };

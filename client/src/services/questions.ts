@@ -1,6 +1,6 @@
 import { apiRequest } from './api';
 import { API_ENDPOINTS } from '../constants/api';
-import type { Question, Answer, QuestionnaireProgress } from '@tolovelist/shared';
+import type { Question, Answer, QuestionnaireProgress, CategoryWithProgress } from '@tolovelist/shared';
 
 export const questionService = {
   async getByCategory(categorySlug: string): Promise<Question[]> {
@@ -10,6 +10,12 @@ export const questionService = {
   async getProgress(profileId: string, categorySlug: string): Promise<QuestionnaireProgress> {
     return apiRequest<QuestionnaireProgress>(
       `${API_ENDPOINTS.QUESTIONS}/progress/${profileId}/${categorySlug}`,
+    );
+  },
+
+  async getAllProgress(profileId: string): Promise<CategoryWithProgress[]> {
+    return apiRequest<CategoryWithProgress[]>(
+      `${API_ENDPOINTS.QUESTIONS}/progress/${profileId}`,
     );
   },
 
