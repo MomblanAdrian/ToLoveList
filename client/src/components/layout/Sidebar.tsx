@@ -5,9 +5,10 @@ import { useAuthStore } from '../../store/authStore';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard', icon: '◉' },
+  { to: '/questionnaires', label: 'Questionnaires', icon: '📋' },
+  { to: '/recommendations', label: 'Recommendations', icon: '💡' },
   { to: '/profiles', label: 'Profiles', icon: '👤' },
   { to: '/groups', label: 'Groups', icon: '👥' },
-  { to: '/categories', label: 'Categories', icon: '⊞' },
 ];
 
 export function Sidebar() {

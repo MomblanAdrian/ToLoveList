@@ -7,6 +7,21 @@ interface RecommendationCardProps {
   index: number;
 }
 
+const META_LABELS: Record<string, string> = {
+  address: '📍 Address',
+  website: '🔗 Website',
+  rating: '⭐ Rating',
+  cuisine: '🍽️ Cuisine',
+  priceRange: '💰 Price',
+  openingHours: '🕐 Hours',
+  genre: '🎭 Genre',
+  platform: '📺 Platform',
+  author: '✍️ Author',
+  duration: '⏱ Duration',
+  cost: '💵 Cost',
+  difficulty: '🎯 Difficulty',
+};
+
 export function RecommendationCard({ recommendation, index }: RecommendationCardProps) {
   const scoreColor =
     recommendation.compatibilityScore >= 80
@@ -16,6 +31,13 @@ export function RecommendationCard({ recommendation, index }: RecommendationCard
       : 'from-orange-500 to-orange-400';
 
   const metadata = recommendation.metadata as Record<string, unknown>;
+
+  const address = metadata.address as string | undefined;
+  const website = (metadata.website as string) || (metadata.url as string | undefined);
+
+  const filteredEntries = Object.entries(metadata).filter(
+    ([key, value]) => value && key !== 'address' && key !== 'website' && key !== 'url',
+  );
 
   return (
     <motion.div
@@ -56,18 +78,51 @@ export function RecommendationCard({ recommendation, index }: RecommendationCard
           <p className="text-sm text-surface-300">{recommendation.whyMatch}</p>
         </div>
 
-        {Object.keys(metadata).length > 0 && (
+        {address && (
+          <a
+            href={`https://maps.google.com/?q=${encodeURIComponent(address)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface-800/50 border border-surface-700/50 mb-2 text-sm text-primary-400 hover:text-primary-300 hover:bg-surface-800 transition-colors"
+          >
+            <span className="text-base">📍</span>
+            <span className="flex-1 truncate">{address}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+          </a>
+        )}
+
+        {website && (
+          <a
+            href={website.startsWith('http') ? website : `https://${website}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-surface-800/50 border border-surface-700/50 mb-2 text-sm text-primary-400 hover:text-primary-300 hover:bg-surface-800 transition-colors"
+          >
+            <span className="text-base">🔗</span>
+            <span className="flex-1 truncate">{website.replace(/^https?:\/\//, '')}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+          </a>
+        )}
+
+        {filteredEntries.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
-            {Object.entries(metadata).slice(0, 4).map(([key, value]) => {
-              if (!value) return null;
+            {filteredEntries.slice(0, 6).map(([key, value]) => {
               const strValue = String(value);
-              if (strValue.length > 30) return null;
+              const label = META_LABELS[key] || key.replace(/([A-Z])/g, ' $1').trim();
               return (
                 <span
                   key={key}
-                  className="px-2 py-0.5 rounded-full bg-surface-800 text-xs text-surface-400 capitalize"
+                  className="px-2 py-0.5 rounded-full bg-surface-800 text-xs text-surface-400"
                 >
-                  {key.replace(/([A-Z])/g, ' $1').trim()}: {strValue}
+                  {label}: {strValue.length > 25 ? strValue.slice(0, 25) + '…' : strValue}
                 </span>
               );
             })}

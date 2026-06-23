@@ -14,6 +14,9 @@ import { Questionnaire } from '../pages/Questionnaire';
 import { RecommendationFeed } from '../pages/RecommendationFeed';
 import { RecommendationDetail } from '../pages/RecommendationDetail';
 import { Settings } from '../pages/Settings';
+import { AIDebug } from '../pages/AIDebug';
+import { QuestionnairesHub } from '../pages/QuestionnairesHub';
+import { RecommendationsHub } from '../pages/RecommendationsHub';
 
 export const router = createBrowserRouter([
   { path: '/', element: <Landing /> },
@@ -31,11 +34,14 @@ export const router = createBrowserRouter([
           { path: '/profiles/:id', element: <CreateProfile /> },
           { path: '/groups', element: <GroupSetup /> },
           { path: '/groups/:id', element: <GroupDetail /> },
-          { path: '/categories', element: <CategorySelection /> },
+          { path: '/categories', element: <QuestionnairesHub /> },
+          { path: '/questionnaires', element: <QuestionnairesHub /> },
+          { path: '/recommendations', element: <RecommendationsHub /> },
           { path: '/questionnaire/:profileId/:categorySlug', element: <Questionnaire /> },
           { path: '/recommendations/:profileId/:categorySlug', element: <RecommendationFeed /> },
           { path: '/recommendations/group/:groupId/:categorySlug', element: <RecommendationDetail /> },
           { path: '/settings', element: <Settings /> },
+          { path: '/debug/ai', element: <AIDebug /> },
         ],
       },
     ],

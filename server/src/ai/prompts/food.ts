@@ -41,5 +41,5 @@ User profiles and their food preferences:
 
 ${profilesStr}
 
-Generate 5-8 highly personalized food and restaurant recommendations based on the preferences above. Consider the number of users and their combined preferences.`;
+Generate exactly 5 highly personalized food and restaurant recommendations based on the preferences above. Consider the number of users and their combined preferences.`;
 }

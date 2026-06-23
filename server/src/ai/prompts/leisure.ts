@@ -42,5 +42,5 @@ User profiles and their leisure preferences:
 
 ${profilesStr}
 
-Generate 5-8 highly personalized activity and leisure recommendations based on the preferences above. Consider the group size and dynamics.`;
+Generate exactly 5 highly personalized activity and leisure recommendations based on the preferences above. Consider the group size and dynamics.`;
 }

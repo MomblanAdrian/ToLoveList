@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useQuestions, useSubmitAnswer } from '../hooks/useQuestions';
+import { useQuestions, useProfileAnswers, useSubmitAnswer } from '../hooks/useQuestions';
+import { useGenerateRecommendations } from '../hooks/useRecommendations';
 import { Button } from '../components/ui/Button';
 import { Slider } from '../components/ui/Slider';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
@@ -11,44 +12,64 @@ export function Questionnaire() {
   const { profileId, categorySlug } = useParams<{ profileId: string; categorySlug: string }>();
   const navigate = useNavigate();
   const { data: questions, isLoading } = useQuestions(categorySlug || '');
+  const { data: existingAnswers } = useProfileAnswers(profileId || '', categorySlug);
   const submitAnswer = useSubmitAnswer();
+  const generateRecs = useGenerateRecommendations();
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    if (existingAnswers && questions && !initialized) {
+      const initial: Record<string, number> = {};
+      for (const a of existingAnswers) {
+        initial[a.questionId] = a.value;
+      }
+      setAnswers(initial);
+
+      const lastAnsweredIndex = questions.findIndex(
+        (q) => initial[q.id] === undefined,
+      );
+      if (lastAnsweredIndex > 0) {
+        setCurrentIndex(lastAnsweredIndex);
+      } else if (lastAnsweredIndex === -1 && questions.length > 0) {
+        setCurrentIndex(questions.length - 1);
+      }
+      setInitialized(true);
+    }
+  }, [existingAnswers, questions, initialized]);
 
   const category = CATEGORIES.find((c) => c.slug === categorySlug);
 
   const currentQuestion = questions?.[currentIndex];
-  const progress = questions ? ((Object.keys(answers).length) / questions.length) * 100 : 0;
-  const isComplete = questions && Object.keys(answers).length >= questions.length;
+  const answeredCount = Object.keys(answers).length;
+  const progress = questions ? (answeredCount / questions.length) * 100 : 0;
 
   const handleValueChange = useCallback((value: number) => {
     if (!currentQuestion) return;
     setAnswers((prev) => ({ ...prev, [currentQuestion.id]: value }));
   }, [currentQuestion]);
 
-  const handleNext = async () => {
+  const submitAndAdvance = async () => {
     if (!currentQuestion) return;
-
     const value = answers[currentQuestion.id];
-    if (value !== undefined) {
-      try {
-        await submitAnswer.mutateAsync({
-          profileId: profileId!,
-          questionId: currentQuestion.id,
-          value,
-        });
-      } catch {}
-    }
+    if (value === undefined) return;
+
+    try {
+      await submitAnswer.mutateAsync({
+        profileId: profileId!,
+        questionId: currentQuestion.id,
+        value,
+      });
+    } catch {}
 
     if (questions && currentIndex < questions.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     }
   };
 
-  const handleComplete = async () => {
-    setIsSubmitting(true);
+  const submitAndComplete = async () => {
     if (currentQuestion && answers[currentQuestion.id] !== undefined) {
       try {
         await submitAnswer.mutateAsync({
@@ -58,7 +79,16 @@ export function Questionnaire() {
         });
       } catch {}
     }
-    setIsSubmitting(false);
+
+    if (categorySlug && profileId) {
+      try {
+        await generateRecs.mutateAsync({
+          categorySlug,
+          profileIds: [profileId],
+        });
+      } catch {}
+    }
+
     navigate(`/recommendations/${profileId}/${categorySlug}`);
   };
 
@@ -138,7 +168,7 @@ export function Questionnaire() {
                 {currentIndex < questions.length - 1 ? (
                   <>
                     <Button
-                      onClick={handleNext}
+                      onClick={submitAndAdvance}
                       fullWidth
                       disabled={answers[currentQuestion.id] === undefined}
                     >
@@ -150,9 +180,9 @@ export function Questionnaire() {
                   </>
                 ) : (
                   <Button
-                    onClick={handleComplete}
+                    onClick={submitAndComplete}
                     fullWidth
-                    loading={isSubmitting}
+                    loading={generateRecs.isPending}
                   >
                     Complete & Get Recommendations
                   </Button>

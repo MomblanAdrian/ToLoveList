@@ -42,5 +42,5 @@ ${p.answers.map((a) => `  - "${a.questionText}": ${a.value}/100`).join('\n')}`,
 
 ${profilesStr}
 
-Generate 5-8 highly personalized book recommendations based on the preferences above. Include a mix of well-known and lesser-known titles.`;
+Generate exactly 5 highly personalized book recommendations based on the preferences above. Include a mix of well-known and lesser-known titles.`;
 }

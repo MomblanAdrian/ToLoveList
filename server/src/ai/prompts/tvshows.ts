@@ -40,5 +40,5 @@ ${p.answers.map((a) => `  - "${a.questionText}": ${a.value}/100`).join('\n')}`,
 
 ${profilesStr}
 
-Generate 5-8 highly personalized TV show, movie, and streaming content recommendations based on the preferences above. Consider current popular content and hidden gems.`;
+Generate exactly 5 highly personalized TV show, movie, and streaming content recommendations based on the preferences above. Consider current popular content and hidden gems.`;
 }

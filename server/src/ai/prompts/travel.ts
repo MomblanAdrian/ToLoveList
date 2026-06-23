@@ -44,5 +44,5 @@ User profiles and their travel preferences:
 
 ${profilesStr}
 
-Generate 5-8 highly personalized travel and getaway recommendations based on the preferences above. Consider proximity to their location and the group dynamic.`;
+Generate exactly 5 highly personalized travel and getaway recommendations based on the preferences above. Consider proximity to their location and the group dynamic.`;
 }

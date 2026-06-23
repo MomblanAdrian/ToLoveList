@@ -6,13 +6,22 @@ import { ApiError } from '../utils/api-error.js';
 import type { GenerateRecommendationRequest } from '@tolovelist/shared';
 import { questionService } from './question.service.js';
 
+type RecWithCategory = Prisma.RecommendationGetPayload<{ include: { category: true } }>;
+
+function flattenCategory(rec: RecWithCategory) {
+  const { category, ...rest } = rec;
+  return { ...rest, categorySlug: category.slug };
+}
+
 export const recommendationService = {
   async getRecommendations(profileId: string, categorySlug?: string) {
-    return recommendationRepository.findByProfileId(profileId, categorySlug);
+    const recs = await recommendationRepository.findByProfileId(profileId, categorySlug);
+    return recs.map(flattenCategory);
   },
 
   async getGroupRecommendations(groupId: string, categorySlug?: string) {
-    return recommendationRepository.findByGroupId(groupId, categorySlug);
+    const recs = await recommendationRepository.findByGroupId(groupId, categorySlug);
+    return recs.map(flattenCategory);
   },
 
   async generateRecommendations(data: GenerateRecommendationRequest) {
@@ -86,6 +95,6 @@ export const recommendationService = {
       },
     });
 
-    return saved;
+    return saved.map(flattenCategory);
   },
 };

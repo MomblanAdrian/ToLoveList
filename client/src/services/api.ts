@@ -81,7 +81,13 @@ export async function apiRequest<T>(
   const data = (await response.json()) as ApiResponse<T>;
 
   if (!response.ok || !data.success) {
-    throw new Error(data.error?.message || 'Request failed');
+    const msg = data.error?.message || 'Request failed';
+    const details = data.error?.details;
+    if (details) {
+      const fieldMessages = Object.values(details).flat().join('. ');
+      throw new Error(fieldMessages ? `${msg}: ${fieldMessages}` : msg);
+    }
+    throw new Error(msg);
   }
 
   return data.data as T;

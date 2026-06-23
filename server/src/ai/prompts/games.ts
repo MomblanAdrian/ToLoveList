@@ -41,5 +41,5 @@ ${p.answers.map((a) => `  - "${a.questionText}": ${a.value}/100`).join('\n')}`,
 
 ${profilesStr}
 
-Generate 5-8 highly personalized video game recommendations based on the preferences above. Consider current popular titles and cross-platform availability for groups.`;
+Generate exactly 5 highly personalized video game recommendations based on the preferences above. Consider current popular titles and cross-platform availability for groups.`;
 }
