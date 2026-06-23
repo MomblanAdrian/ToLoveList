@@ -4,42 +4,66 @@
 
 @layer base {
   * {
-    @apply border-surface-800;
+    @apply border-surface-800/60;
   }
 
   body {
-    @apply bg-surface-950 text-surface-100;
+    @apply bg-surface-950 text-warm-50;
     font-feature-settings: 'cv11', 'ss01';
   }
 
   ::selection {
-    @apply bg-primary-500/30 text-white;
+    @apply bg-primary-400/40 text-white;
   }
 
   :focus-visible {
-    @apply outline-2 outline-primary-500 outline-offset-2;
+    @apply outline-2 outline-primary-400 outline-offset-2;
   }
 }
 
 @layer components {
   .glass {
-    @apply bg-surface-800/50 backdrop-blur-xl border border-surface-700/50;
+    @apply bg-surface-800/40 backdrop-blur-xl border border-surface-700/40;
   }
 
   .glass-hover {
-    @apply hover:bg-surface-800/70 hover:border-surface-600/50 transition-all duration-300;
+    @apply hover:bg-surface-700/40 hover:border-surface-600/40 transition-all duration-300;
   }
 
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-primary-600;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-rose-400 via-primary-400 to-amber-400;
+  }
+
+  .gradient-text-rose {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-rose-400 to-primary-500;
   }
 
   .gradient-bg {
-    @apply bg-gradient-to-br from-primary-600 via-primary-500 to-pink-500;
+    @apply bg-gradient-to-br from-rose-600 via-primary-500 to-amber-600;
+  }
+
+  .gradient-bg-subtle {
+    @apply bg-gradient-to-br from-rose-600/80 via-primary-500/80 to-amber-600/80;
   }
 
   .card-gradient {
-    @apply bg-gradient-to-br from-surface-800 to-surface-900 border border-surface-700/50;
+    @apply bg-gradient-to-br from-surface-800/80 to-surface-900/80 border border-surface-700/30;
+  }
+
+  .card-warm {
+    @apply bg-gradient-to-br from-surface-800/60 via-surface-800/40 to-surface-900/60 border border-rose-900/20;
+  }
+
+  .card-hover {
+    @apply hover:border-rose-700/30 hover:shadow-lg hover:shadow-rose-900/10 transition-all duration-300;
+  }
+
+  .glow-rose {
+    @apply shadow-lg shadow-rose-500/10;
+  }
+
+  .glow-amber {
+    @apply shadow-lg shadow-amber-500/10;
   }
 
   .slider-thumb {
@@ -61,6 +85,11 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  .bg-warm-dots {
+    background-image: radial-gradient(circle, rgba(244, 63, 94, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 }
 
