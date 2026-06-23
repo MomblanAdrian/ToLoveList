@@ -31,9 +31,7 @@ function NavBar() {
   return (
     <nav className="relative z-20 flex items-center justify-between px-5 py-5 max-w-6xl mx-auto">
       <Link to="/" className="flex items-center gap-2.5 group">
-        <div className="w-9 h-9 rounded-xl gradient-bg flex items-center justify-center text-base font-bold shadow-lg shadow-rose-500/20 group-hover:shadow-rose-500/30 transition-shadow">
-          T
-        </div>
+        <img src="/logo.png" alt="ToLoveList" className="w-9 h-9 rounded-xl object-cover shadow-lg shadow-rose-500/20 group-hover:shadow-rose-500/30 transition-shadow" />
         <span className="text-lg font-semibold text-warm-50 tracking-tight">ToLoveList</span>
       </Link>
       <div className="flex items-center gap-2">
@@ -60,6 +58,15 @@ function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-surface-950 via-surface-950 to-surface-950/95" />
 
       <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative z-10 max-w-4xl mx-auto px-5 py-24 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.05 }}
+          className="mb-8"
+        >
+          <img src="/logo.png" alt="ToLoveList" className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl shadow-2xl shadow-rose-500/20" />
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -246,7 +253,7 @@ function FooterSection() {
     <footer className="relative py-12 px-5 border-t border-surface-800/40">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg gradient-bg flex items-center justify-center text-xs font-bold">T</div>
+          <img src="/logo.png" alt="ToLoveList" className="w-8 h-8 rounded-lg object-cover" />
           <span className="text-sm font-medium text-warm-300">ToLoveList</span>
         </div>
         <p className="text-sm text-warm-500">Made for moments that matter ✦</p>
