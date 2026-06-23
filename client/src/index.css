@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-surface-800;
+  }
+
+  body {
+    @apply bg-surface-950 text-surface-100;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  ::selection {
+    @apply bg-primary-500/30 text-white;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-primary-500 outline-offset-2;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-surface-800/50 backdrop-blur-xl border border-surface-700/50;
+  }
+
+  .glass-hover {
+    @apply hover:bg-surface-800/70 hover:border-surface-600/50 transition-all duration-300;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-primary-600;
+  }
+
+  .gradient-bg {
+    @apply bg-gradient-to-br from-primary-600 via-primary-500 to-pink-500;
+  }
+
+  .card-gradient {
+    @apply bg-gradient-to-br from-surface-800 to-surface-900 border border-surface-700/50;
+  }
+
+  .slider-thumb {
+    @apply appearance-none w-full h-2 rounded-full bg-surface-700 outline-none;
+  }
+
+  .slider-thumb::-webkit-slider-thumb {
+    @apply appearance-none w-6 h-6 rounded-full bg-primary-500 cursor-pointer shadow-lg shadow-primary-500/30 transition-transform hover:scale-110;
+  }
+
+  .slider-thumb::-moz-range-thumb {
+    @apply w-6 h-6 rounded-full bg-primary-500 cursor-pointer border-0 shadow-lg shadow-primary-500/30;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

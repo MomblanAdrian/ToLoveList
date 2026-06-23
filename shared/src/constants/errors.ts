@@ -1,0 +1,31 @@
+export const ERROR_CODES = {
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  FORBIDDEN: 'FORBIDDEN',
+  NOT_FOUND: 'NOT_FOUND',
+  CONFLICT: 'CONFLICT',
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  RATE_LIMITED: 'RATE_LIMITED',
+  AI_PROVIDER_ERROR: 'AI_PROVIDER_ERROR',
+  INVALID_REFRESH_TOKEN: 'INVALID_REFRESH_TOKEN',
+  EMAIL_ALREADY_EXISTS: 'EMAIL_ALREADY_EXISTS',
+  USERNAME_ALREADY_EXISTS: 'USERNAME_ALREADY_EXISTS',
+  GROUP_FULL: 'GROUP_FULL',
+  PROFILE_ALREADY_IN_GROUP: 'PROFILE_ALREADY_IN_GROUP',
+} as const;
+
+export const ERROR_MESSAGES: Record<string, string> = {
+  [ERROR_CODES.VALIDATION_ERROR]: 'Invalid input data',
+  [ERROR_CODES.UNAUTHORIZED]: 'Authentication required',
+  [ERROR_CODES.FORBIDDEN]: 'You do not have permission',
+  [ERROR_CODES.NOT_FOUND]: 'Resource not found',
+  [ERROR_CODES.CONFLICT]: 'Resource already exists',
+  [ERROR_CODES.INTERNAL_ERROR]: 'An unexpected error occurred',
+  [ERROR_CODES.RATE_LIMITED]: 'Too many requests, please try again later',
+  [ERROR_CODES.AI_PROVIDER_ERROR]: 'AI provider returned an error',
+  [ERROR_CODES.INVALID_REFRESH_TOKEN]: 'Invalid or expired refresh token',
+  [ERROR_CODES.EMAIL_ALREADY_EXISTS]: 'An account with this email already exists',
+  [ERROR_CODES.USERNAME_ALREADY_EXISTS]: 'This username is already taken',
+  [ERROR_CODES.GROUP_FULL]: 'Group already has the maximum number of profiles',
+  [ERROR_CODES.PROFILE_ALREADY_IN_GROUP]: 'Profile is already in this group',
+};
