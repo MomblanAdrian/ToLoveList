@@ -38,9 +38,7 @@ export function Login() {
       >
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center text-lg font-bold">
-              T
-            </div>
+            <img src="/logo.png" alt="ToLoveList" className="w-10 h-10 rounded-xl object-cover" />
             <span className="text-xl font-display font-bold gradient-text">ToLoveList</span>
           </Link>
           <h1 className="text-2xl font-display font-bold text-white">Welcome back</h1>

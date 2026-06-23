@@ -38,9 +38,7 @@ export function Sidebar() {
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-surface-800">
             <NavLink to="/dashboard" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-              <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center text-lg font-bold">
-                T
-              </div>
+              <img src="/logo.png" alt="ToLoveList" className="w-10 h-10 rounded-xl object-cover" />
               <span className="text-xl font-display font-bold gradient-text">ToLoveList</span>
             </NavLink>
           </div>
